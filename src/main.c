@@ -17,6 +17,7 @@
 // Inicia a fila
 void init_main_queue(){
     gate_queue = create_queue();
+    //teste alteracao julia
 }
 
 // Destroi a fila
