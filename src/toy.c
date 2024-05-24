@@ -27,9 +27,9 @@ void *turn_on(void *args){
 // Essa função recebe como argumento informações e deve iniciar os brinquedos.
 void open_toys(toy_args *args){
     // Sua lógica aqui
+    sem_t sem[args->n];
     for (int i = 0 ; i < args->n; i++ ) {
         // inicia um semaforo. com value = capacidade, para cada brinquedo
-        sem_t sem[i];
         sem_init(&sem[i], 0, args->toys[i]->capacity);
     }
 }
