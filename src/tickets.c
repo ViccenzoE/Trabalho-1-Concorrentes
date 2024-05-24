@@ -11,6 +11,7 @@
 #include <queue.h>
 #include "shared.h"
 
+int contagem_clientes = 0;
 
 // Thread que implementa uma bilheteria
 void *sell(void *args){
@@ -23,9 +24,12 @@ void *sell(void *args){
 // Essa função recebe como argumento informações sobre a bilheteria e deve iniciar os atendentes.
 void open_tickets(tickets_args *args){
     // Sua lógica aqui
+    // cada elemento da fila(cliente) é colocado em um thread_tickets, ate que todos sejam atendidos 
+    
 }
 
 // Essa função deve finalizar a bilheteria
 void close_tickets(){
     //Sua lógica aqui
+    // se alcancou numero max de clientes, encerra as threads/semaforos/mutexes
 }

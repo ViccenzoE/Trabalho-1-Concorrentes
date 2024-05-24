@@ -55,12 +55,19 @@ toy_t **init_toys(int number){
 // Inicia a instância dos funcionarios
 ticket_t ** init_tickets(int number){
     ticket_t **tickets = malloc(number * sizeof(ticket_t));
+    // cria 1 thread para cada cabine de atendimento
+    pthread_t threads_tickets[number];
     for (int i = 0; i < number; i++){
         tickets[i] = (ticket_t *) malloc(sizeof(ticket_t));
         tickets[i]->id = i + 1;
+        // inicializa thread para cada cabine
+        pthread_create(&threads_tickets[i], NULL, NULL , NULL); //Sem funcao e argumentos de inicio
     }
     return tickets;
 }
+//for (int i = 0; i < number; i++){
+//    pthread_join(&threads_tickets[i], NULL);
+//}
 
  // Desaloca os clientes
 void finish_clients(client_t **clients, int number_clients){
@@ -82,6 +89,7 @@ void finish_toys(toy_t **toys, int number_toys){
 void finish_tickets(ticket_t **tickets, int number_clients){
     for (int i = 0; i < number_clients; i++){
         free(tickets[i]);
+        pthread_exit(NULL);
     }
     free(tickets);
 }
