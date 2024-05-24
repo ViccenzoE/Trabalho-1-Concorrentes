@@ -41,13 +41,13 @@ client_t **init_clients(int number, int toy_number, toy_t **toys){
 toy_t **init_toys(int number){
     toy_t **toys = malloc(number * sizeof(toy_t));
     // cria 1 thread para cada brinquedo
-    pthread_t threads[number];
+    pthread_t threads_toys[number];
     for (int i = 0; i < number; i++){
         toys[i] = (toy_t *) malloc(sizeof(toy_t));
         toys[i]->id = i + 1;
         toys[i]->capacity = rand() % (MAX_CAPACITY_TOY - 1) + MIN_CAPACITY_TOY;
         // inicializa thread para cada brinquedo
-        pthread_create(&threads[i], NULL, NULL , NULL); //Sem funcao e argumentos de inicio
+        pthread_create(&threads_toys[i], NULL, NULL , NULL); //Sem funcao e argumentos de inicio
     }
     return toys;
 }
