@@ -27,9 +27,16 @@ void *turn_on(void *args){
 // Essa função recebe como argumento informações e deve iniciar os brinquedos.
 void open_toys(toy_args *args){
     // Sua lógica aqui
+    //é a primeira funcao chamada apos alocar em memoria clients, bilheteria e brinquedos
+    // passo 1 - criar uma semaforo para cada brinquedo
+    for (int i = 0 ; i < args->length(); i++ ) {
+        sem_t sem[i];
+        sem_init(&sem[i], 0, args[i]->capacity);
+    }
 }
 
 // Desligando os brinquedos
 void close_toys(){
     // Sua lógica aqui
+    //passo 1 - desalocar os semaforos criados
 }
