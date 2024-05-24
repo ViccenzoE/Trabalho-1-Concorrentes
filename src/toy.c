@@ -39,3 +39,5 @@ void close_toys(){
     // Sua lógica aqui
     //passo 1 - desalocar os semaforos criados
 }
+
+//Teste 2 
