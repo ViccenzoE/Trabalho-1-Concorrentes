@@ -15,17 +15,34 @@
 
 // Thread que implementa o fluxo do cliente no parque.
 void *enjoy(void *arg){
-
     //Sua lógica aqui
 
+    client_t *self = (client_t *)arg;
+
+    //entrar na fila da bilheteria
+    queue_enter(self);
+
+    //esperar até ser atendido
+    wait_ticket(self);
+    
+    //brincar até o fim das moedas
+    while (self->coins > 0){
+        
+    }
 
     debug("[EXIT] - O turista saiu do parque.\n");
     pthread_exit(NULL);
+
+    //decrementar moedas
+    self->coins--;
 }
 
 // Funcao onde o cliente compra as moedas para usar os brinquedos
 void buy_coins(client_t *self){
     // Sua lógica aqui
+    //lógica para saber se o cliente já está dentro do parque ou fora
+    //revisar quantos são comprados por vez
+    self->coins = MAX_COINS + 1;
 }
 
 // Função onde o cliente espera a liberacao da bilheteria para adentrar ao parque.
@@ -54,3 +71,4 @@ void open_gate(client_args *args){
 void close_gate(){
    //Sua lógica aqui
 }
+
