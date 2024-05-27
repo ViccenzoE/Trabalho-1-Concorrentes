@@ -11,13 +11,24 @@
 #include <queue.h>
 #include "shared.h"
 
-int contagem_clientes = 0;
+//int contagem_clientes = 0;
+pthread_mutex_t dequeue_mutex;
 
 // Thread que implementa uma bilheteria
 void *sell(void *args){
 
     debug("[INFO] - Bilheteria Abriu!\n");
-
+    int id_cliente_atual;
+    // cenario considerando que todos clientes entram na fila de 1 so vez
+    // enquanto a fila tiver clientes, serao atendidos
+    while (!is_queue_empty(gate_queue)) {
+        // mutex para proteger a região critica
+        // região critica : apenas 1 thread pode atender o cliente
+        pthread_mutex_lock(&dequeue_mutex);
+        id_cliente_atual = dequeue(gate_queue);
+        // agora o cliente pode brincar
+        pthread_mutex_unlock(&dequeue_mutex);
+    }
     pthread_exit(NULL);
 }
 
@@ -25,7 +36,12 @@ void *sell(void *args){
 void open_tickets(tickets_args *args){
     // Sua lógica aqui
     // cada elemento da fila(cliente) é colocado em um thread_tickets, ate que todos sejam atendidos 
-    
+    pthread_t threads_tickets[args->n];
+    pthread_mutex_init(&dequeue_mutex, NULL);
+    for (int i = 0; i < args->n; i++){
+        pthread_create(&threads_tickets[i], NULL, sell , NULL); 
+    }
+
 }
 
 // Essa função deve finalizar a bilheteria
