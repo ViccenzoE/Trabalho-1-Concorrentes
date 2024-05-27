@@ -60,14 +60,9 @@ ticket_t ** init_tickets(int number){
     for (int i = 0; i < number; i++){
         tickets[i] = (ticket_t *) malloc(sizeof(ticket_t));
         tickets[i]->id = i + 1;
-        // inicializa thread para cada cabine
-        pthread_create(&threads_tickets[i], NULL, NULL , NULL); //Sem funcao e argumentos de inicio
     }
     return tickets;
 }
-//for (int i = 0; i < number; i++){
-//    pthread_join(&threads_tickets[i], NULL);
-//}
 
  // Desaloca os clientes
 void finish_clients(client_t **clients, int number_clients){
