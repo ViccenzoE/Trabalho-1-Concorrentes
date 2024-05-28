@@ -12,30 +12,132 @@
 #include "toy.h"
 #include "shared.h"
 
+// Inicializa variáveis globais.
+toy_t **thread_to_toy = NULL;
+pthread_t *threads_toys = NULL;
+int max_toys = 0;
+pthread_mutex_t map_lock = PTHREAD_MUTEX_INITIALIZER;
+
+// Mapeia id de thread para id de brinquedo.
+void initialize_thread_to_toy(toy_args *args, int i) {
+    pthread_mutex_lock(&map_lock);
+    thread_to_toy[i] = args->toys[i];
+    pthread_mutex_unlock(&map_lock);
+}
 
 // Thread que o brinquedo vai usar durante toda a simulacao do sistema
 void *turn_on(void *args){
 
-    debug("[ON] - O brinquedo  [%d] foi ligado.\n", rand()); // Altere para o id do brinquedo
+    pthread_t self = pthread_self();
+    toy_t *toy = NULL;
+    int value;
 
-    debug("[OFF] - O brinquedo [%d] foi desligado.\n", rand()); // Altere para o id do brinquedo
+    // Procura o brinquedo associado com esta thread.
+    pthread_mutex_lock(&map_lock);
+    for (int i = 0; i < max_toys; i++) {
+        if (thread_to_toy[i] != NULL && pthread_equal(thread_to_toy[i]->thread, self)) {
+            toy = thread_to_toy[i];
+            break;
+        }
+    }
+    pthread_mutex_unlock(&map_lock);
+
+    if (toy != NULL) {
+        // Acessa o id do brinquedo.
+        debug("[ON] - O brinquedo [%d] foi ligado.\n", toy->id);
+
+        while(TRUE) {
+            // Aguarda 5 segundos para as threads cliente escolherem brinquedos.
+            sleep(5);
+            // Abre para um número de clientes igual à capacidade do brinquedo, ou quantos estiverem na fila, se menor.
+            int num_enter = min(toy->capacity, 2*(toy->capacity)-sem_getvalue(&sem_toys[toy->id], &value));
+            for (int i = 0; i < num_enter; i++) {
+                sem_post(&sem_toys_enter[toy->id]);
+            }
+            // Brinquedo funciona por 10 segundos.
+            sleep(10);
+            // Deixa sair um número de clientes igual à quantidade que entrou.
+            for (int i = 0; i < num_enter; i++) {
+                sem_post(&sem_toys_leave[toy->id]);
+            }           
+        }
+
+
+        debug("[OFF] - O brinquedo [%d] foi desligado.\n", toy->id);
+    } else {
+        // Erro
+        fprintf(stderr, "Erro: Não foi encontrado o brinquedo para a thread %lu\n", (unsigned long)self);
+    }
 
     pthread_exit(NULL);
 }
 
-
 // Essa função recebe como argumento informações e deve iniciar os brinquedos.
 void open_toys(toy_args *args){
     // Sua lógica aqui
-    sem_t sem_toys[args->n];
-    for (int i = 0 ; i < args->n; i++ ) {
-        // inicia um semaforo. com value = capacidade, para cada brinquedo
-        sem_init(&sem_toys[i], 0, args->toys[i]->capacity);
+
+    // Determina a variável global max_toys a partir dos argumentos.
+    max_toys = args->n;
+
+    // Aloca memória dinamicamente para os arrays de variáveis e semáforos.
+    thread_to_toy = malloc(max_toys * sizeof(toy_t *));
+    threads_toys = malloc(max_toys * sizeof(pthread_t));
+    sem_toys = malloc(max_toys * sizeof(sem_t));
+    sem_toys_enter = malloc(max_toys * sizeof(sem_t));
+    sem_toys_leave = malloc(max_toys * sizeof(sem_t));
+
+    if (thread_to_toy == NULL || threads_toys == NULL || sem_toys == NULL || sem_toys_enter == NULL || sem_toys_leave == NULL) {
+        fprintf(stderr, "Erro: Falha ao alocar memória para arrays.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < args->n; i++) {
+        // Inicia semáforo com value = 2*capacidade para a fila de espera, para cada brinquedo.
+        sem_init(&sem_toys[i], 0, 2*(args->toys[i]->capacity));
+        // Inicia semáforos com value = 0 para entrada e saída, para cada brinquedo.
+        // A ideia é que as threads brinquedo funcionam como signaler, e as threads cliente, como waiter, para um evento (entrada e saída do brinquedo).
+        sem_init(&sem_toys_enter[i], 0, 0);
+        sem_init(&sem_toys_leave[i], 0, 0);
+
+        initialize_thread_to_toy(args, i);
+
+        pthread_create(&threads_toys[i], NULL, turn_on , NULL); 
+
+        args->toys[i]->thread = threads_toys[i];
     }
 }
 
 // Desligando os brinquedos
 void close_toys(){
     // Sua lógica aqui
-    //passo 1 - desalocar os semaforos criados
+
+    // Une as threads.
+    for (int i = 0; i < max_toys; i++) {
+        pthread_join(threads_toys[i], NULL);
+    }
+
+    // Destrói os semáforos.
+    for (int i = 0; i < max_toys; i++) {
+        sem_destroy(&sem_toys[i]);
+        sem_destroy(&sem_toys_enter[i]);
+        sem_destroy(&sem_toys_leave[i]);
+    }
+
+    // Libera memória dos arrays e semáforos.
+    free(thread_to_toy);
+    thread_to_toy = NULL;
+
+    free(threads_toys);
+    threads_toys = NULL;
+
+    free(sem_toys);
+    sem_toys = NULL;
+
+    free(sem_toys_enter);
+    sem_toys_enter = NULL;
+
+    free(sem_toys_leave);
+    sem_toys_leave = NULL;
+
+    max_toys = 0;
 }
