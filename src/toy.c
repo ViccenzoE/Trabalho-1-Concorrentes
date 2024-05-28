@@ -15,7 +15,7 @@
 // Inicializa variáveis globais.
 toy_t **thread_to_toy = NULL;
 pthread_t *threads_toys = NULL;
-int max_toys = 0;
+int num_toys = 0;
 pthread_mutex_t map_lock = PTHREAD_MUTEX_INITIALIZER;
 
 // Mapeia id de thread para id de brinquedo.
@@ -34,7 +34,7 @@ void *turn_on(void *args){
 
     // Procura o brinquedo associado com esta thread.
     pthread_mutex_lock(&map_lock);
-    for (int i = 0; i < max_toys; i++) {
+    for (int i = 0; i < num_toys; i++) {
         if (thread_to_toy[i] != NULL && pthread_equal(thread_to_toy[i]->thread, self)) {
             toy = thread_to_toy[i];
             break;
@@ -50,7 +50,7 @@ void *turn_on(void *args){
             // Aguarda 5 segundos para as threads cliente escolherem brinquedos.
             sleep(5);
             // Abre para um número de clientes igual à capacidade do brinquedo, ou quantos estiverem na fila, se menor.
-            int num_enter = min(toy->capacity, 2*(toy->capacity)-sem_getvalue(&sem_toys[toy->id], &value));
+            int num_enter = max(toy->capacity, 2*(toy->capacity)-sem_getvalue(&sem_toys[toy->id], &value));
             for (int i = 0; i < num_enter; i++) {
                 sem_post(&sem_toys_enter[toy->id]);
             }
@@ -77,14 +77,14 @@ void open_toys(toy_args *args){
     // Sua lógica aqui
 
     // Determina a variável global max_toys a partir dos argumentos.
-    max_toys = args->n;
+    num_toys = args->n;
 
     // Aloca memória dinamicamente para os arrays de variáveis e semáforos.
-    thread_to_toy = malloc(max_toys * sizeof(toy_t *));
-    threads_toys = malloc(max_toys * sizeof(pthread_t));
-    sem_toys = malloc(max_toys * sizeof(sem_t));
-    sem_toys_enter = malloc(max_toys * sizeof(sem_t));
-    sem_toys_leave = malloc(max_toys * sizeof(sem_t));
+    thread_to_toy = malloc(num_toys * sizeof(toy_t *));
+    threads_toys = malloc(num_toys * sizeof(pthread_t));
+    sem_toys = malloc(num_toys * sizeof(sem_t));
+    sem_toys_enter = malloc(num_toys * sizeof(sem_t));
+    sem_toys_leave = malloc(num_toys * sizeof(sem_t));
 
     if (thread_to_toy == NULL || threads_toys == NULL || sem_toys == NULL || sem_toys_enter == NULL || sem_toys_leave == NULL) {
         fprintf(stderr, "Erro: Falha ao alocar memória para arrays.\n");
@@ -112,12 +112,12 @@ void close_toys(){
     // Sua lógica aqui
 
     // Une as threads.
-    for (int i = 0; i < max_toys; i++) {
+    for (int i = 0; i < num_toys; i++) {
         pthread_join(threads_toys[i], NULL);
     }
 
     // Destrói os semáforos.
-    for (int i = 0; i < max_toys; i++) {
+    for (int i = 0; i < num_toys; i++) {
         sem_destroy(&sem_toys[i]);
         sem_destroy(&sem_toys_enter[i]);
         sem_destroy(&sem_toys_leave[i]);
@@ -139,5 +139,5 @@ void close_toys(){
     free(sem_toys_leave);
     sem_toys_leave = NULL;
 
-    max_toys = 0;
+    num_toys = 0;
 }

@@ -5,7 +5,7 @@
 
 // Você pode declarar novas funções aqui
 
-extern int max_toys;
+extern int num_toys;
 extern toy_t **thread_to_toy;
 extern sem_t *sem_toys;
 extern sem_t *sem_toys_enter;
