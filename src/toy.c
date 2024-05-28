@@ -27,39 +27,43 @@ void initialize_thread_to_toy(toy_args *args, int i) {
 
 // Thread que o brinquedo vai usar durante toda a simulacao do sistema
 void *turn_on(void *args){
-
+    toy_t *toy = (toy_t *) args;
     pthread_t self = pthread_self();
-    toy_t *toy = NULL;
+    // toy_t *toy = NULL;
     int value;
 
     // Procura o brinquedo associado com esta thread.
-    pthread_mutex_lock(&map_lock);
-    for (int i = 0; i < num_toys; i++) {
-        if (thread_to_toy[i] != NULL && pthread_equal(thread_to_toy[i]->thread, self)) {
-            toy = thread_to_toy[i];
-            break;
-        }
-    }
-    pthread_mutex_unlock(&map_lock);
+    // pthread_mutex_lock(&map_lock);
+    // for (int i = 0; i < num_toys; i++) {
+    //     if (thread_to_toy[i] != NULL && pthread_equal(thread_to_toy[i]->thread, self)) {
+    //         toy = thread_to_toy[i];
+    //         break;
+    //     }
+    // }
+    // pthread_mutex_unlock(&map_lock);
 
     if (toy != NULL) {
         // Acessa o id do brinquedo.
         debug("[ON] - O brinquedo [%d] foi ligado.\n", toy->id);
-
+        int wait_time = 2*toy->id;
         while(TRUE) {
-            // Aguarda 5 segundos para as threads cliente escolherem brinquedos.
-            sleep(5);
+            // Aguarda wait_time segundos para as threads cliente escolherem brinquedos.
+            sleep(wait_time);
             // Abre para um número de clientes igual à capacidade do brinquedo, ou quantos estiverem na fila, se menor.
             int num_enter = max(toy->capacity, 2*(toy->capacity)-sem_getvalue(&sem_toys[toy->id], &value));
             for (int i = 0; i < num_enter; i++) {
-                sem_post(&sem_toys_enter[toy->id]);
+                sem_wait(&sem_toys_enter[toy->id]);
             }
             // Brinquedo funciona por 10 segundos.
-            sleep(10);
+            if (sem_getvalue(&sem_toys_enter[toy->id] < toy->capacity, &value)) {
+                //lock mutex do cliente entrando no brinquedo
+                sleep(2*wait_time);
+            }
             // Deixa sair um número de clientes igual à quantidade que entrou.
             for (int i = 0; i < num_enter; i++) {
-                sem_post(&sem_toys_leave[toy->id]);
-            }           
+                sem_post(&sem_toys_enter[toy->id]);
+            }
+            //unlock mutex do cliente entrando no brinquedo           
         }
 
 
@@ -75,7 +79,7 @@ void *turn_on(void *args){
 // Essa função recebe como argumento informações e deve iniciar os brinquedos.
 void open_toys(toy_args *args){
     // Sua lógica aqui
-
+    
 
     // Determina a variável global max_toys a partir dos argumentos.
     num_toys = args->n;
@@ -97,12 +101,12 @@ void open_toys(toy_args *args){
         sem_init(&sem_toys[i], 0, 2*(args->toys[i]->capacity));
         // Inicia semáforos com value = 0 para entrada e saída, para cada brinquedo.
         // A ideia é que as threads brinquedo funcionam como signaler, e as threads cliente, como waiter, para um evento (entrada e saída do brinquedo).
-        sem_init(&sem_toys_enter[i], 0, 0);
+        sem_init(&sem_toys_enter[i], 0, args->toys[i]->capacity);
         sem_init(&sem_toys_leave[i], 0, 0);
 
         initialize_thread_to_toy(args, i);
 
-        pthread_create(&threads_toys[i], NULL, turn_on , NULL); 
+        pthread_create(&threads_toys[i], NULL, turn_on , args->toys[i]); // args->toys[i]->id
 
         args->toys[i]->thread = threads_toys[i];
 
