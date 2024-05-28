@@ -76,6 +76,7 @@ void *turn_on(void *args){
 void open_toys(toy_args *args){
     // Sua lógica aqui
 
+
     // Determina a variável global max_toys a partir dos argumentos.
     num_toys = args->n;
 
@@ -104,6 +105,7 @@ void open_toys(toy_args *args){
         pthread_create(&threads_toys[i], NULL, turn_on , NULL); 
 
         args->toys[i]->thread = threads_toys[i];
+
     }
 }
 
