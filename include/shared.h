@@ -6,6 +6,7 @@
 // Você pode declarar novas funções (ou variaveis compartilhadas) aqui
 
 int parque_fecha = 0;
+extern pthread_mutex_t *mutex_cliente_fila;
 
 /**********************************
  *          ATENÇÃO               *
