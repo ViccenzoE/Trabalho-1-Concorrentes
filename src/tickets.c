@@ -28,7 +28,7 @@ void *sell(void *args){
         // região critica : apenas 1 thread pode atender o cliente
         pthread_mutex_lock(&dequeue_mutex);
         id_cliente_atual = dequeue(gate_queue);
-      
+        pthread_mutex_unlock(&mutex_cliente_fila[id_cliente_atual]);
         // funcao no arquivo shared ?? que faz o cliente entrar no parque 
         autoriza_cliente(id_cliente_atual);
         pthread_mutex_unlock(&dequeue_mutex);
@@ -41,7 +41,7 @@ void *sell(void *args){
 // Essa função recebe como argumento informações sobre a bilheteria e deve iniciar os atendentes.
 void open_tickets(tickets_args *args){
     // Sua lógica aqui
-    // cada elemento da fila(cliente) é colocado em um thread_tickets, ate que todos sejam atendidos 
+    // cada cliente da fila é colocado em um thread_tickets, ate que todos sejam atendidos 
     pthread_t threads_tickets[args->n];
     pthread_mutex_init(&dequeue_mutex, NULL);
     for (int i = 0; i < args->n; i++){
