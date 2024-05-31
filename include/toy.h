@@ -6,6 +6,7 @@
 // Você pode declarar novas funções aqui
 
 extern int num_toys;
+extern pthread_t *threads_toys;
 
 /********************************
  *          ATENÇÃO             *
