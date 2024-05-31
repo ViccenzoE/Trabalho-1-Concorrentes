@@ -26,11 +26,7 @@ void *enjoy(void *arg){
         int toy_id = rand() % num_toys;
         
         // Esperar a vez para entrar no brinquedo
-        sem_wait(&sem_toys[toy_id]);
-        sem_post(&sem_toys_enter[toy_id]);
-        
-        // Esperar até sair do brinquedo
-        sem_wait(&sem_toys_leave[toy_id]);
+        sem_wait(&sem_toys_enter[toy_id]);
         
         // Decrementar moedas
         self->coins--;
@@ -63,7 +59,7 @@ void queue_enter(client_t *self){
     
     buy_coins(self);
     // Sua lógica aqui.
-    pthread_create(&threads_clients[self->id], NULL, enjoy , NULL); 
+    pthread_create(&threads_clients[self->id], NULL, enjoy , self); 
     debug("[CASH] - Turista [%d] comprou [%d] moedas.\n", self->id, self->coins);
 }
 
