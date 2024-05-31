@@ -15,7 +15,7 @@
 // Inicializa variáveis globais.
 pthread_t *threads_toys = NULL;
 int num_toys = 0;
-pthread_mutex_t toy_lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t toy_lock;
 
 // Thread que o brinquedo vai usar durante toda a simulacao do sistema
 void *turn_on(void *args){
@@ -37,7 +37,7 @@ void *turn_on(void *args){
                 //lock mutex do cliente entrando no brinquedo
                 sleep(2*wait_time);
             }
-            int num_enter = toy->capacity - sem_getvalue(&sem_toys_enter[toy->id]);
+            int num_enter = toy->capacity - sem_getvalue(&sem_toys_enter[toy->id], &value);
             // Deixa sair um número de clientes igual à quantidade que entrou.
             for (int i = 0; i < num_enter; i++) {
                 sem_post(&sem_toys_enter[toy->id]);
