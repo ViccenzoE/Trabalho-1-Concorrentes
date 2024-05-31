@@ -32,9 +32,6 @@ void *turn_on(void *args){
             sleep(wait_time);
             // Abre para um número de clientes igual à capacidade do brinquedo.
             int num_enter = toy->capacity;
-            for (int i = 0; i < num_enter; i++) {
-                sem_wait(&sem_toys_enter[toy->id]);
-            }
             // Brinquedo funciona por 10 segundos.
             if (sem_getvalue(&sem_toys_enter[toy->id] < toy->capacity, &value)) {
                 //lock mutex do cliente entrando no brinquedo
