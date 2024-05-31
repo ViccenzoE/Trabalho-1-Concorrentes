@@ -5,7 +5,7 @@
 
 // Você pode declarar novas funções aqui
 
-
+pthread_mutex_t dequeue_mutex;
 
 /********************************
  *          ATENÇÃO             *
