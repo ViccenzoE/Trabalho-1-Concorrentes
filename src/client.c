@@ -14,6 +14,8 @@
 #include "toy.h"
 #include "tickets.h"
 
+// Inicializa variáveis globais.
+int num_clients = 0;
 pthread_t *threads_clients = NULL;
 
 // Thread que implementa o fluxo do cliente no parque.
@@ -24,9 +26,12 @@ void *enjoy(void *arg){
     while (self->coins > 0){
         // Escolher um brinquedo
         int toy_id = rand() % num_toys;
-        
+
+        // Clientes não podem tentar entrar no brinquedo se ele estiver funcionando.
+        pthread_mutex_lock(&toy_lock);
         // Esperar a vez para entrar no brinquedo
         sem_wait(&sem_toys_enter[toy_id]);
+        pthread_mutex_unlock(&toy_lock);
         
         // Decrementar moedas
         self->coins--;
@@ -67,6 +72,7 @@ void queue_enter(client_t *self){
 void open_gate(client_args *args){
     initialize_shared(args);
     pthread_t *threads_clients = malloc(args->n * sizeof(pthread_t));
+    pthread_mutex_t *mutex_cliente_fila = malloc(args->n * sizeof(pthread_mutex_t));
     
     for (int i = 0; i < args->n; i++){
         queue_enter(args->clients[i]);
@@ -77,6 +83,25 @@ void open_gate(client_args *args){
 
 // Essa função deve finalizar os clientes
 void close_gate(){
+
+    // Une as threads.
+    for (int i = 0; i < num_clients; i++) {
+        pthread_join(threads_clients[i], NULL);
+    }
+
+    // Destrói os mutexes.
+    for (int i = 0; i < num_clients; i++) {
+        pthread_mutex_destroy(&mutex_cliente_fila[i]);
+    }
+
+    // Libera memória dos arrays.
     free(threads_clients);
+    threads_clients = NULL;
+
+    free(mutex_cliente_fila);
+    mutex_cliente_fila = NULL;
+
+    num_clients = 0;
+
     finalize_shared();
 }
