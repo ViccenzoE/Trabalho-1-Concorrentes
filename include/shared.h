@@ -5,7 +5,7 @@
 
 // Você pode declarar novas funções (ou variaveis compartilhadas) aqui
 
-int parque_fecha = 0;
+extern int *parque_fecha = 1;
 extern pthread_mutex_t *mutex_cliente_fila;
 extern pthread_mutex_t *toy_lock;
 

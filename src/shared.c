@@ -11,7 +11,7 @@ pthread_mutex_t *mutex_cliente_atendido;
 pthread_mutex_t bilheteiro_sem;
 
 pthread_mutex_t *toy_lock = PTHREAD_MUTEX_INITIALIZER;
-
+int *parque_fecha = 1;
 
 /**********************************
  *          ATENÇÃO               *
