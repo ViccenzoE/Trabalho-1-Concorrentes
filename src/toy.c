@@ -62,7 +62,7 @@ void open_toys(toy_args *args){
     // Determina a variável global num_toys a partir dos argumentos.
     num_toys = args->n;
 
-    // Aloca memória dinamicamente para os arrays de variáveis, semáforos e mutexes.
+    // Aloca memória dinamicamente para os arrays de threads, semáforos e mutexes.
     threads_toys = malloc(num_toys * sizeof(pthread_t));
     sem_toys_enter = malloc(num_toys * sizeof(sem_t));
     toy_lock = malloc(num_toys * sizeof(pthread_mutex_t));

@@ -6,7 +6,6 @@
 // Você pode declarar novas funções aqui
 
 extern int num_toys;
-extern sem_t *sem_toys_enter;
 
 /********************************
  *          ATENÇÃO             *
