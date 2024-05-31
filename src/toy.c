@@ -23,6 +23,7 @@ void *turn_on(void *args){
     pthread_t self = pthread_self();
     int value;
 
+    pthread_mutex_init(&toy_lock, NULL);
     if (toy != NULL) {
         // Acessa o id do brinquedo.
         debug("[ON] - O brinquedo [%d] foi ligado.\n", toy->id);
@@ -34,7 +35,7 @@ void *turn_on(void *args){
 
             // Brinquedo funciona por 10 segundos.
             if (sem_getvalue(&sem_toys_enter[toy->id] < toy->capacity, &value)) {
-                //lock mutex do cliente entrando no brinquedo
+                pthread_mutex_lock(&toy_lock);
                 sleep(2*wait_time);
             }
             int num_enter = toy->capacity - sem_getvalue(&sem_toys_enter[toy->id], &value);
@@ -42,7 +43,7 @@ void *turn_on(void *args){
             for (int i = 0; i < num_enter; i++) {
                 sem_post(&sem_toys_enter[toy->id]);
             }
-            //unlock mutex do cliente entrando no brinquedo           
+            pthread_mutex_unlock(&toy_lock);
         }
 
 
