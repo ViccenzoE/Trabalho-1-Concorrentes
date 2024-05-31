@@ -15,7 +15,6 @@
 // Inicializa variáveis globais.
 pthread_t *threads_toys = NULL;
 int num_toys = 0;
-pthread_mutex_t toy_lock;
 
 // Thread que o brinquedo vai usar durante toda a simulacao do sistema
 void *turn_on(void *args){
@@ -23,7 +22,7 @@ void *turn_on(void *args){
     pthread_t self = pthread_self();
     int value;
 
-    pthread_mutex_init(&toy_lock, NULL);
+    pthread_mutex_init(&toy_lock[toy->id], NULL);
     if (toy != NULL) {
         // Acessa o id do brinquedo.
         debug("[ON] - O brinquedo [%d] foi ligado.\n", toy->id);
@@ -33,7 +32,7 @@ void *turn_on(void *args){
             // Aguarda wait_time segundos para as threads cliente escolherem brinquedos.
             sleep(wait_time);
             // Impede os clientes de tentarem pegar o semáforo para entrar no brinquedo, brinquedo tentará começar a funcionar.
-            pthread_mutex_lock(&toy_lock);
+            pthread_mutex_lock(&toy_lock[toy->id]);
             num_enter = 0;
             if (sem_getvalue(&sem_toys_enter[toy->id] < toy->capacity, &value)) {
                 num_enter = toy->capacity - sem_getvalue(&sem_toys_enter[toy->id], &value);
@@ -45,7 +44,7 @@ void *turn_on(void *args){
                 sem_post(&sem_toys_enter[toy->id]);
             }
             // Libera os clientes para pegarem o semáforo para entrar no brinquedo.
-            pthread_mutex_unlock(&toy_lock);
+            pthread_mutex_unlock(&toy_lock[toy->id]);
         }
 
         debug("[OFF] - O brinquedo [%d] foi desligado.\n", toy->id);
