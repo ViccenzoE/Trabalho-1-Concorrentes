@@ -20,6 +20,7 @@ void *enjoy(void *arg){
 
     // Entrar na fila da bilheteria
     pthread_mutex_init(&mutex_cliente_fila[self->id], NULL);
+
     queue_enter(self);
 
     // Esperar até ser atendido
@@ -59,6 +60,7 @@ void wait_ticket(client_t *self){
 void queue_enter(client_t *self){
     debug("[WAITING] - Turista [%d] entrou na fila do portao principal\n", self->id);
     pthread_mutex_lock(&mutex_cliente_fila[self->id]);
+
     buy_coins(self);
     debug("[CASH] - Turista [%d] comprou [%d] moedas.\n", self->id, self->coins);
 }
