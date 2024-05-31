@@ -29,7 +29,7 @@ void *turn_on(void *args){
         debug("[ON] - O brinquedo [%d] foi ligado.\n", toy->id);
         int wait_time = 2*toy->id;
         int num_enter;
-        while(parque_fecha) {
+        while(parque_aberto) {
             // Aguarda wait_time segundos para as threads cliente escolherem brinquedos.
             sleep(wait_time);
             // Impede os clientes de tentarem pegar o semáforo para entrar no brinquedo, brinquedo tentará começar a funcionar.
