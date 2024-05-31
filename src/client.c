@@ -11,65 +11,73 @@
 #include "client.h"
 #include "queue.h"
 #include "shared.h"
-
+#include "toy.h"
+#include "tickets.h"
 
 // Thread que implementa o fluxo do cliente no parque.
 void *enjoy(void *arg){
-    //Sua lógica aqui
-
     client_t *self = (client_t *)arg;
 
-    //entrar na fila da bilheteria
-    pthread_mutex_init (&mutex_cliente_fila[self->id], NULL);
+    // Entrar na fila da bilheteria
+    pthread_mutex_init(&mutex_cliente_fila[self->id], NULL);
+
     queue_enter(self);
 
-    //esperar até ser atendido
+    // Esperar até ser atendido
     wait_ticket(self);
     
-    //brincar até o fim das moedas
+    // Brincar até o fim das moedas
     while (self->coins > 0){
+        // Escolher um brinquedo
+        int toy_id = rand() % num_toys;
         
+        // Esperar a vez para entrar no brinquedo
+        sem_wait(&sem_toys[toy_id]);
+        sem_post(&sem_toys_enter[toy_id]);
+        
+        // Esperar até sair do brinquedo
+        sem_wait(&sem_toys_leave[toy_id]);
+        
+        // Decrementar moedas
+        self->coins--;
     }
 
     debug("[EXIT] - O turista saiu do parque.\n");
     pthread_exit(NULL);
-
-    //decrementar moedas
-    self->coins--;
 }
 
-// Funcao onde o cliente compra as moedas para usar os brinquedos
+// Função onde o cliente compra as moedas para usar os brinquedos
 void buy_coins(client_t *self){
-    // Sua lógica aqui
-    //lógica para saber se o cliente já está dentro do parque ou fora
-    //revisar quantos são comprados por vez
-    self->coins = MAX_COINS + 1;
+    self->coins = MAX_COINS;
 }
 
-// Função onde o cliente espera a liberacao da bilheteria para adentrar ao parque.
+// Função onde o cliente espera a liberação da bilheteria para adentrar ao parque.
 void wait_ticket(client_t *self){
-    // Sua lógica aqui
+
 }
 
-// Funcao onde o cliente entra na fila da bilheteria
+// Função onde o cliente entra na fila da bilheteria
 void queue_enter(client_t *self){
-    // Sua lógica aqui.
     debug("[WAITING] - Turista [%d] entrou na fila do portao principal\n", self->id);
     pthread_mutex_lock(&mutex_cliente_fila[self->id]);
-    // Sua lógica aqui.
-    buy_coins(self);
 
-    // Sua lógica aqui.
+    buy_coins(self);
     debug("[CASH] - Turista [%d] comprou [%d] moedas.\n", self->id, self->coins);
 }
 
 // Essa função recebe como argumento informações sobre o cliente e deve iniciar os clientes.
 void open_gate(client_args *args){
-    // Sua lógica aqui
+    initialize_shared(args);
+
+    pthread_t *threads_clients = malloc(args->n * sizeof(pthread_t));
+    for (int i = 0; i < args->n; i++){
+        
+    }
+
+    free(threads_clients);
 }
 
 // Essa função deve finalizar os clientes
 void close_gate(){
-   //Sua lógica aqui
+    finalize_shared();
 }
-
