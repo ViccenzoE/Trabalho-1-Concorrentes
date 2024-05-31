@@ -7,6 +7,7 @@
 
 int parque_fecha = 0;
 extern pthread_mutex_t *mutex_cliente_fila;
+extern pthread_mutex_t *toy_lock = PTHREAD_MUTEX_INITIALIZER;
 
 /**********************************
  *          ATENÇÃO               *
