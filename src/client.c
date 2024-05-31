@@ -22,10 +22,7 @@ void *enjoy(void *arg){
     pthread_mutex_init(&mutex_cliente_fila[self->id], NULL);
 
     queue_enter(self);
-
-    // Esperar até ser atendido
-    wait_ticket(self);
-    
+  
     // Brincar até o fim das moedas
     while (self->coins > 0){
         // Escolher um brinquedo
@@ -48,7 +45,7 @@ void *enjoy(void *arg){
 
 // Função onde o cliente compra as moedas para usar os brinquedos
 void buy_coins(client_t *self){
-    self->coins = MAX_COINS;
+    self->coins = (range() % MAX_COINS) + 1;
 }
 
 // Função onde o cliente espera a liberação da bilheteria para adentrar ao parque.
@@ -58,10 +55,18 @@ void wait_ticket(client_t *self){
 
 // Função onde o cliente entra na fila da bilheteria
 void queue_enter(client_t *self){
-    debug("[WAITING] - Turista [%d] entrou na fila do portao principal\n", self->id);
-    pthread_mutex_lock(&mutex_cliente_fila[self->id]);
 
+    enqueue(gate_queue, self->id);
+    wait_ticket(self);
+    // Sua lógica aqui.
+    debug("[WAITING] - Turista [%d] entrou na fila do portao principal\n", self->id);
+
+    pthread_mutex_init(&mutex_cliente_fila[self->id], NULL);
+    // Sua lógica aqui.
+    
     buy_coins(self);
+
+    // Sua lógica aqui.
     debug("[CASH] - Turista [%d] comprou [%d] moedas.\n", self->id, self->coins);
 }
 
