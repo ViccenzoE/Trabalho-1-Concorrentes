@@ -7,7 +7,6 @@
 
 extern int num_toys;
 extern sem_t *sem_toys_enter;
-extern pthread_mutex_t toy_lock;
 
 /********************************
  *          ATENÇÃO             *
