@@ -14,7 +14,7 @@
 #include "toy.h"
 #include "tickets.h"
 
-pthread_t threads_clients;
+pthread_t *threads_clients = NULL;
 
 // Thread que implementa o fluxo do cliente no parque.
 void *enjoy(void *arg){
@@ -71,10 +71,10 @@ void queue_enter(client_t *self){
 void open_gate(client_args *args){
     initialize_shared(args);
     pthread_t *threads_clients = malloc(args->n * sizeof(pthread_t));
-   
-    //for (int i = 0; i < args->n; i++){
-        
-    //}
+    
+    for (int i = 0; i < args->n; i++){
+        queue_enter(args->clients[i]);
+    }
 
     
 }
