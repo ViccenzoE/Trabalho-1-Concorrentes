@@ -14,14 +14,11 @@
 #include "toy.h"
 #include "tickets.h"
 
+pthread_t threads_clients;
+
 // Thread que implementa o fluxo do cliente no parque.
 void *enjoy(void *arg){
     client_t *self = (client_t *)arg;
-
-    // Entrar na fila da bilheteria
-    pthread_mutex_init(&mutex_cliente_fila[self->id], NULL);
-
-    queue_enter(self);
   
     // Brincar até o fim das moedas
     while (self->coins > 0){
@@ -49,40 +46,41 @@ void buy_coins(client_t *self){
 }
 
 // Função onde o cliente espera a liberação da bilheteria para adentrar ao parque.
-void wait_ticket(client_t *self){
-
+void wait_ticket(client_t *self){    
+    pthread_mutex_lock(&mutex_cliente_fila[self->id]);
 }
 
 // Função onde o cliente entra na fila da bilheteria
 void queue_enter(client_t *self){
 
     enqueue(gate_queue, self->id);
-    wait_ticket(self);
+
     // Sua lógica aqui.
     debug("[WAITING] - Turista [%d] entrou na fila do portao principal\n", self->id);
 
     pthread_mutex_init(&mutex_cliente_fila[self->id], NULL);
-    // Sua lógica aqui.
+    wait_ticket(self);
     
     buy_coins(self);
-
     // Sua lógica aqui.
+    pthread_create(&threads_clients[self->id], NULL, enjoy , NULL); 
     debug("[CASH] - Turista [%d] comprou [%d] moedas.\n", self->id, self->coins);
 }
 
 // Essa função recebe como argumento informações sobre o cliente e deve iniciar os clientes.
 void open_gate(client_args *args){
     initialize_shared(args);
-
     pthread_t *threads_clients = malloc(args->n * sizeof(pthread_t));
-    for (int i = 0; i < args->n; i++){
+   
+    //for (int i = 0; i < args->n; i++){
         
-    }
+    //}
 
-    free(threads_clients);
+    
 }
 
 // Essa função deve finalizar os clientes
 void close_gate(){
+    free(threads_clients);
     finalize_shared();
 }
