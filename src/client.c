@@ -71,7 +71,7 @@ void queue_enter(client_t *self){
 
 // Essa função recebe como argumento informações sobre o cliente e deve iniciar os clientes.
 void open_gate(client_args *args){
-    initialize_shared(args);
+    //initialize_shared(args);
     pthread_t *threads_clients = malloc(args->n * sizeof(pthread_t));
     pthread_mutex_t *mutex_cliente_fila = malloc(args->n * sizeof(pthread_mutex_t));
     
@@ -104,5 +104,5 @@ void close_gate(){
 
     num_clients = 0;
 
-    finalize_shared();
+    //finalize_shared();
 }
