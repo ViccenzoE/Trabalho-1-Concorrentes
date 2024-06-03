@@ -13,8 +13,8 @@
 #include "shared.h"
 
 // Inicializa variáveis globais.
-pthread_t *threads_toys = NULL;
 int num_toys = 0;
+pthread_t *threads_toys = NULL;
 
 // Thread que o brinquedo vai usar durante toda a simulacao do sistema
 void *turn_on(void *args){
