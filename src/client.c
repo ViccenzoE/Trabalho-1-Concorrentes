@@ -17,6 +17,7 @@
 // Inicializa variáveis globais.
 int num_clients = 0;
 pthread_t *threads_clients = NULL;
+pthread_mutex_t *mutex_cliente_fila = NULL;
 
 // Thread que implementa o fluxo do cliente no parque.
 void *enjoy(void *arg){
@@ -28,8 +29,8 @@ void *enjoy(void *arg){
         int toy_id = rand() % num_toys;
 
         // Clientes não podem tentar entrar no brinquedo se ele estiver funcionando.
-        pthread_mutex_lock(&toy_lock);
-        pthread_mutex_unlock(&toy_lock);
+        pthread_mutex_lock(&toy_lock[toy_id]);
+        pthread_mutex_unlock(&toy_lock[toy_id]);
         // Esperar a vez para entrar no brinquedo
         sem_wait(&sem_toys_enter[toy_id]);
 
@@ -44,7 +45,7 @@ void *enjoy(void *arg){
 
 // Função onde o cliente compra as moedas para usar os brinquedos
 void buy_coins(client_t *self){
-    self->coins = (range() % MAX_COINS) + 1;
+    self->coins = (rand() % MAX_COINS) + 1;
 }
 
 // Função onde o cliente espera a liberação da bilheteria para adentrar ao parque.
@@ -72,8 +73,8 @@ void queue_enter(client_t *self){
 // Essa função recebe como argumento informações sobre o cliente e deve iniciar os clientes.
 void open_gate(client_args *args){
     //initialize_shared(args);
-    pthread_t *threads_clients = malloc(args->n * sizeof(pthread_t));
-    pthread_mutex_t *mutex_cliente_fila = malloc(args->n * sizeof(pthread_mutex_t));
+    threads_clients = malloc(args->n * sizeof(pthread_t));
+    mutex_cliente_fila = malloc(args->n * sizeof(pthread_mutex_t));
     
     for (int i = 0; i < args->n; i++){
         queue_enter(args->clients[i]);
