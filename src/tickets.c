@@ -12,6 +12,7 @@
 #include "shared.h"
 
 pthread_mutex_t dequeue_mutex;
+pthread_t *threads_tickets = NULL;
 
 // Thread que implementa uma bilheteria
 void *sell(void *args){
@@ -35,7 +36,8 @@ void *sell(void *args){
 
 // Essa função recebe como argumento informações sobre a bilheteria e deve iniciar os atendentes.
 void open_tickets(tickets_args *args){
-    pthread_t threads_tickets[args->n];
+
+    threads_tickets = malloc(args->n * sizeof(pthread_t));
     pthread_mutex_init(&dequeue_mutex, NULL);
     for (int i = 0; i < args->n; i++){
         // cada cliente da fila é atendido em um thread_tickets, até que todos sejam atendidos 
@@ -45,10 +47,11 @@ void open_tickets(tickets_args *args){
     for (int j = 0; j < args->n; j++) {
         pthread_join(threads_tickets[j], NULL);
     }
-
 }
 
 // Essa função deve finalizar a bilheteria
 void close_tickets(){
+    free(threads_tickets);
+    threads_tickets = NULL;
     pthread_mutex_destroy(&dequeue_mutex);
 }
