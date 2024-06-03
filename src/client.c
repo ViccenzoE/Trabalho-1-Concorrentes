@@ -94,7 +94,7 @@ void close_gate(){
 
     // Destrói os mutexes.
     for (int i = 0; i < num_clients; i++) {
-        pthread_mutex_destroy(&sem_cliente_fila[i]);
+        sem_destroy(&sem_cliente_fila[i]);
     }
 
     // Libera memória dos arrays.
