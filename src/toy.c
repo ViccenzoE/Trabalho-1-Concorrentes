@@ -36,7 +36,8 @@ void *turn_on(void *args){
             // Impede os clientes de tentarem pegar o semáforo para entrar no brinquedo, brinquedo tentará começar a funcionar.
             pthread_mutex_lock(&toy_lock[toy->id]);
             num_enter = 0;
-            if (sem_getvalue(&sem_toys_enter[toy->id] < toy->capacity, &value)) {
+            // if (sem_getvalue(&sem_toys_enter[toy->id] < toy->capacity, &value)) { 
+            if (sem_getvalue(&sem_toys_enter[toy->id], &value)) { 
                 num_enter = toy->capacity - sem_getvalue(&sem_toys_enter[toy->id], &value);
                 // Brinquedo entra em funcionamento por wait_time segundos.
                 sleep(wait_time);
