@@ -24,7 +24,7 @@ void *sell(void *args){
         // um cliente é atendido pelo atendente
         id_cliente_atual = dequeue(gate_queue);
         // libera o cliente para entrar no parque
-        pthread_mutex_unlock(&mutex_cliente_fila[id_cliente_atual]);
+        sem_post(&sem_cliente_fila[id_cliente_atual]);
         // fim da região crítica
         pthread_mutex_unlock(&dequeue_mutex);
         // agora o cliente pode brincar

@@ -17,7 +17,7 @@
 // Inicializa variáveis globais.
 int num_clients = 0;
 pthread_t *threads_clients = NULL;
-pthread_mutex_t *mutex_cliente_fila = NULL;
+pthread_mutex_t *sem_cliente_fila = NULL;
 
 // Thread que implementa o fluxo do cliente no parque.
 void *enjoy(void *arg){
@@ -50,7 +50,7 @@ void buy_coins(client_t *self){
 
 // Função onde o cliente espera a liberação da bilheteria para adentrar ao parque.
 void wait_ticket(client_t *self){    
-    pthread_mutex_lock(&mutex_cliente_fila[self->id]);
+    sem_wait(&sem_cliente_fila[self->id]);
 }
 
 // Função onde o cliente entra na fila da bilheteria
@@ -61,7 +61,8 @@ void queue_enter(client_t *self){
     // Sua lógica aqui.
     debug("[WAITING] - Turista [%d] entrou na fila do portao principal\n", self->id);
 
-    pthread_mutex_init(&mutex_cliente_fila[self->id], NULL);
+    //semaforo binario 
+    sem_init(&sem_cliente_fila[self->id], 0, 0);
     wait_ticket(self);
     
     buy_coins(self);
@@ -74,7 +75,7 @@ void queue_enter(client_t *self){
 void open_gate(client_args *args){
     //initialize_shared(args);
     threads_clients = malloc(args->n * sizeof(pthread_t));
-    mutex_cliente_fila = malloc(args->n * sizeof(pthread_mutex_t));
+    sem_cliente_fila = malloc(args->n * sizeof(sem_t));
     
     for (int i = 0; i < args->n; i++){
         queue_enter(args->clients[i]);
@@ -93,15 +94,15 @@ void close_gate(){
 
     // Destrói os mutexes.
     for (int i = 0; i < num_clients; i++) {
-        pthread_mutex_destroy(&mutex_cliente_fila[i]);
+        pthread_mutex_destroy(&sem_cliente_fila[i]);
     }
 
     // Libera memória dos arrays.
     free(threads_clients);
     threads_clients = NULL;
 
-    free(mutex_cliente_fila);
-    mutex_cliente_fila = NULL;
+    free(sem_cliente_fila);
+    sem_cliente_fila = NULL;
 
     num_clients = 0;
 

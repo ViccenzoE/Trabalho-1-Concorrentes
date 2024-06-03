@@ -7,7 +7,7 @@
 
 extern int parque_aberto;
 extern sem_t *sem_toys_enter;
-extern pthread_mutex_t *mutex_cliente_fila;
+extern sem_t *sem_cliente_fila;
 extern pthread_mutex_t *toy_lock;
 
 /**********************************
