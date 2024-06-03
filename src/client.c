@@ -17,7 +17,7 @@
 // Inicializa variáveis globais.
 int num_clients = 0;
 pthread_t *threads_clients = NULL;
-pthread_mutex_t *sem_cliente_fila = NULL;
+sem_t *sem_cliente_fila = NULL;
 
 // Thread que implementa o fluxo do cliente no parque.
 void *enjoy(void *arg){
