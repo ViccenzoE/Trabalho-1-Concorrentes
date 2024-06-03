@@ -21,7 +21,7 @@ pthread_t *threads_clients = NULL;
 // Thread que implementa o fluxo do cliente no parque.
 void *enjoy(void *arg){
     client_t *self = (client_t *)arg;
-  
+    queue_enter(self);
     // Brincar até o fim das moedas
     while (self->coins > 0){
         // Escolher um brinquedo
@@ -66,7 +66,7 @@ void queue_enter(client_t *self){
     
     buy_coins(self);
     // Sua lógica aqui.
-    pthread_create(&threads_clients[self->id], NULL, enjoy , self); 
+    
     debug("[CASH] - Turista [%d] comprou [%d] moedas.\n", self->id, self->coins);
 }
 
@@ -77,7 +77,8 @@ void open_gate(client_args *args){
     sem_cliente_fila = malloc(args->n * sizeof(sem_t));
     
     for (int i = 0; i < args->n; i++){
-        queue_enter(args->clients[i]);
+        pthread_create(&threads_clients[i], NULL, enjoy , args->clients[i]); 
+        // queue_enter(args->clients[i]);
     }
 
     
