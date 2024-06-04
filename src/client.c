@@ -77,8 +77,8 @@ void queue_enter(client_t *self){
 // Essa função recebe como argumento informações sobre o cliente e deve iniciar os clientes.
 void open_gate(client_args *args){
     //initialize_shared(args);
-    threads_clients = malloc(args->n * sizeof(pthread_t));
-    sem_cliente_fila = malloc(args->n * sizeof(sem_t));
+    threads_clients = malloc((args->n + 1) * sizeof(pthread_t));
+    sem_cliente_fila = malloc((args->n + 1) * sizeof(sem_t));
     
     for (int i = 1; i <= args->n; i++){
         pthread_create(&threads_clients[i], NULL, enjoy , args->clients[i]); 
