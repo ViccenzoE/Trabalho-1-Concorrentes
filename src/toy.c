@@ -21,6 +21,7 @@ pthread_t *threads_toys = NULL;
 
 // Thread que o brinquedo vai usar durante toda a simulacao do sistema
 void *turn_on(void *args){
+    debug("[EXCLUIR] - O brinquedo foi ACIONADO.\n");
     toy_t *toy = (toy_t *) args;
     pthread_t self = pthread_self();
     // int value;
