@@ -36,8 +36,10 @@ void *enjoy(void *arg){
         
         // Decrementar moedas
         self->coins--;
+        debug("[EXCLUIR] - Turista [%d] ESTA NO PARQUE [%d] moedas.\n", self->id, self->coins);
     }
 
+    debug("[EXCLUIR] - Turista [%d] sai do PARQUE [%d] moedas.\n", self->id, self->coins);
     debug("[EXIT] - O turista saiu do parque.\n");
     pthread_exit(NULL);
 }
