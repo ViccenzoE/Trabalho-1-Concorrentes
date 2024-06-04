@@ -14,6 +14,8 @@
 
 // Inicializa variáveis globais.
 int num_toys = 0;
+int *num_toys = NULL;
+int *wait_time = NULL;
 pthread_t *threads_toys = NULL;
 
 // Thread que o brinquedo vai usar durante toda a simulacao do sistema
