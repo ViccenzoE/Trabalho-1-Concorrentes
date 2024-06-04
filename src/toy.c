@@ -28,17 +28,21 @@ void *turn_on(void *args){
         debug("[ON] - O brinquedo [%d] foi ligado.\n", toy->id);
         // Tempo de espera do brinquedo depende da sua id, para que as transições não ocorram todas ao mesmo tempo.
         int wait_time = 2*toy->id + 3;
-        int num_enter;
+        int num_enter = toy->capacity;
         // Loop do brinquedo roda enquanto algum cliente tiver ao menos uma moeda.
         while(parque_aberto) {
             // Aguarda wait_time segundos para as threads cliente escolherem brinquedos.
             sleep(wait_time);
+            // Na primeira execução do loop, abre para a capacidade máxima de clientes.
+            for (int i = 0; i < num_enter; i++) {
+                sem_post(&sem_toys_enter[toy->id]);
+            }
             // Impede os clientes de tentarem pegar o semáforo para entrar no brinquedo, brinquedo tentará começar a funcionar.
             pthread_mutex_lock(&toy_lock[toy->id]);
             num_enter = 0;
             // if (sem_getvalue(&sem_toys_enter[toy->id] < toy->capacity, &value)) { 
             if (sem_getvalue(&sem_toys_enter[toy->id], &value)) { 
-                num_enter = toy->capacity - sem_getvalue(&sem_toys_enter[toy->id], &value);
+                num_enter = toy->capacity - value;
                 // Brinquedo entra em funcionamento por wait_time segundos.
                 sleep(wait_time);
             }
@@ -46,6 +50,7 @@ void *turn_on(void *args){
             for (int i = 0; i < num_enter; i++) {
                 sem_post(&sem_toys_enter[toy->id]);
             }
+            num_enter = 0;
             // Libera os clientes para pegarem o semáforo para entrar no brinquedo.
             pthread_mutex_unlock(&toy_lock[toy->id]);
         }
