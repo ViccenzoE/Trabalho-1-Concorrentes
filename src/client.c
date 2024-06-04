@@ -29,15 +29,18 @@ void *enjoy(void *arg){
 
         // Clientes não podem tentar entrar no brinquedo se ele estiver funcionando.
         pthread_mutex_lock(&toy_lock[toy_id]);
+        pthread_mutex_unlock(&toy_lock[toy_id]);
+       // sem_getvalue(&sem_toy_lock, &value);
+        
         //pthread_mutex_unlock(&toy_lock[toy_id]);
         // Esperar a vez para entrar no brinquedo
         sem_wait(&sem_toys_enter[toy_id]);
 
-        pthread_mutex_unlock(&toy_lock[toy_id]);
+        
 
         // Clientes não podem sair do brinquedo se ele estiver funcionando.
-        //pthread_mutex_lock(&toy_lock_out[toy_id]);
-        //pthread_mutex_unlock(&toy_lock_out[toy_id]);
+        pthread_mutex_lock(&toy_lock_out[toy_id]);
+        pthread_mutex_unlock(&toy_lock_out[toy_id]);
         
         // Decrementar moedas
         self->coins--;

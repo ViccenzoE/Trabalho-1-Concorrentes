@@ -21,7 +21,7 @@ pthread_t *threads_toys = NULL;
 
 // Thread que o brinquedo vai usar durante toda a simulacao do sistema
 void *turn_on(void *args){
-    debug("[EXCLUIR] - O brinquedo foi ACIONADO.\n");
+    debug("[EXCLUIR] - O brinquedo foi ACIONADO.\n"); //seg fault a partir daqui
     toy_t *toy = (toy_t *) args;
     pthread_t self = pthread_self();
     // int value;
@@ -35,7 +35,7 @@ void *turn_on(void *args){
         // Loop do brinquedo roda enquanto algum cliente tiver ao menos uma moeda.
         while(parque_aberto) {
             // Aguarda wait_time segundos para as threads cliente escolherem brinquedos.
-            
+            pthread_mutex_lock(&toy_lock_out[toy->id - 1]);
             sleep(wait_time[(toy->id -1)]);
             debug("[EXCLUIR] - NUM_ENTER pre brincar [%d] foi ligado brinquedo [%d].\n", num_enter[(toy->id - 1)], (toy->id));
             // Impede os clientes de tentarem pegar o semáforo para entrar no brinquedo, brinquedo tentará começar a funcionar.
@@ -60,7 +60,8 @@ void *turn_on(void *args){
 //            }
             num_enter[(toy->id -1)]= 0;
             // Libera os clientes para pegarem o semáforo para entrar no brinquedo.
-            pthread_mutex_unlock(&toy_lock[(toy->id -1)]);
+            pthread_mutex_unlock(&toy_lock_out[toy->id - 1]);
+            pthread_mutex_unlock(&toy_lock[(toy->id - 1)]);
         }
         debug("[OFF] - O brinquedo [%d] foi desligado.\n", (toy->id));
     } else {
