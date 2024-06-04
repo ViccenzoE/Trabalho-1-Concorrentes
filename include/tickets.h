@@ -7,6 +7,7 @@
 
 //pthread_mutex_t dequeue_mutex;
 extern pthread_t *threads_tickets;
+extern int num_tickets;
 
 /********************************
  *          ATENÇÃO             *
