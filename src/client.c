@@ -81,17 +81,15 @@ void open_gate(client_args *args){
         // queue_enter(args->clients[i]);
     }
 
-    
-}
-
-// Essa função deve finalizar os clientes
-void close_gate(){
-
     // Une as threads.
     for (int i = 0; i < num_clients; i++) {
         pthread_join(threads_clients[i], NULL);
     }
+}
 
+// Essa função deve finalizar os clientes
+void close_gate(){
+    
     // Destrói os mutexes.
     for (int i = 0; i < num_clients; i++) {
         sem_destroy(&sem_cliente_fila[i]);

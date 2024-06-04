@@ -37,22 +37,24 @@ void *sell(void *args){
 
 // Essa função recebe como argumento informações sobre a bilheteria e deve iniciar os atendentes.
 void open_tickets(tickets_args *args){
+
     num_tickets = args ->n;
     threads_tickets = malloc(num_tickets * sizeof(pthread_t));
     pthread_mutex_init(&dequeue_mutex, NULL);
+    
     for (int i = 0; i < num_tickets; i++){
         // cada cliente da fila é atendido em um thread_tickets, até que todos sejam atendidos 
         pthread_create(&threads_tickets[i], NULL, sell , NULL); 
     }
-    
+
+    // aguarda todas as threads tickets terminarem
+    for (int j = 0; j < num_tickets; j++) {
+        pthread_join(threads_tickets[j], NULL);
+    }   
 }
 
 // Essa função deve finalizar a bilheteria
 void close_tickets(){
-    // aguarda todas as threads tickets terminarem
-    for (int j = 0; j < num_tickets; j++) {
-        pthread_join(threads_tickets[j], NULL);
-    }
 
     free(threads_tickets);
     threads_tickets = NULL;
