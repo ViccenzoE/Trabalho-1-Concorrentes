@@ -39,7 +39,7 @@ void *sell(void *args){
 void open_tickets(tickets_args *args){
 
     num_tickets = args ->n;
-    threads_tickets = malloc(num_tickets * sizeof(pthread_t));
+    threads_tickets = malloc((num_tickets + 1) * sizeof(pthread_t));
     pthread_mutex_init(&dequeue_mutex, NULL);
 
     for (int i = 1; i <= num_tickets; i++){
