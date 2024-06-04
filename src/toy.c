@@ -23,8 +23,8 @@ void *turn_on(void *args){
     toy_t *toy = (toy_t *) args;
     pthread_t self = pthread_self();
     int value;
-
     pthread_mutex_init(&toy_lock[(toy->id -1)], NULL);
+    pthread_mutex_init(&toy_lock_out[(toy->id -1)], NULL);
     if (toy != NULL) {
         // Acessa o id do brinquedo.
         debug("[ON] - O brinquedo [%d] foi ligado.\n", (toy->id));
@@ -41,7 +41,7 @@ void *turn_on(void *args){
             num_enter[(toy->id -1)] = 0;
             // if (sem_getvalue(&sem_toys_enter[(toy->id -1)] < toy->capacity, &value)) {
             sem_getvalue(&sem_toys_enter[(toy->id -1)], &value);
-            if (value) {
+            if (value < toy->capacity) {
                 num_enter[(toy->id -1)] = toy->capacity - value;
                 // Brinquedo entra em funcionamento por wait_time segundos.
                 sleep(wait_time[(toy->id -1)]);
@@ -91,7 +91,7 @@ void open_toys(toy_args *args){
 
     for (int i = 0; i < args->n; i++) {
         // Inicia semáforo com valor igual à capacidade do brinquedo para entrada, para cada brinquedo.
-        sem_init(&sem_toys_enter[i], 0, 0);
+        sem_init(&sem_toys_enter[i], 0, args->toys[i]->capacity);
         // Cria as threads brinquedo.
         pthread_create(&threads_toys[i], NULL, turn_on , args->toys[i]);
         // Atualiza com a thread correspondente a cada brinquedo.
