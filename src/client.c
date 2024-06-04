@@ -53,7 +53,7 @@ void buy_coins(client_t *self){
 
 // Função onde o cliente espera a liberação da bilheteria para adentrar ao parque.
 void wait_ticket(client_t *self){    
-    sem_wait(&sem_cliente_fila[self->id]);
+    sem_wait(&sem_cliente_fila[self->id -1]);
 }
 
 // Função onde o cliente entra na fila da bilheteria
@@ -65,7 +65,7 @@ void queue_enter(client_t *self){
     debug("[WAITING] - Turista [%d] entrou na fila do portao principal\n", self->id);
 
     //semaforo binario 
-    sem_init(&sem_cliente_fila[self->id], 0, 0);
+    sem_init(&sem_cliente_fila[self->id -1], 0, 0);
     wait_ticket(self);
     
     buy_coins(self);
