@@ -25,6 +25,7 @@ void *turn_on(void *args){
     int value;
 
     pthread_mutex_init(&toy_lock[toy->id], NULL);
+    pthread_mutex_init(&toy_lock_out[toy->id], NULL);
     if (toy != NULL) {
         // Acessa o id do brinquedo.
         debug("[ON] - O brinquedo [%d] foi ligado.\n", toy->id);
