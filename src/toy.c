@@ -81,6 +81,7 @@ void open_toys(toy_args *args){
     threads_toys = malloc(num_toys * sizeof(pthread_t));
     sem_toys_enter = malloc(num_toys * sizeof(sem_t));
     toy_lock = malloc(num_toys * sizeof(pthread_mutex_t));
+    toy_lock_out = malloc(num_toys * sizeof(pthread_mutex_t));
 
     // Aloca memória dinamicamente para arrays de variáveis.
     wait_time = malloc(num_toys * sizeof(int));
@@ -121,9 +122,16 @@ void close_toys(){
         pthread_mutex_destroy(&toy_lock[i]);
     }
 
+    for (int i = 0; i < num_toys; i++) {
+        pthread_mutex_destroy(&toy_lock_out[i]);
+    }
+
     // Libera memória dos arrays.
     free(toy_lock);
     toy_lock = NULL;
+
+    free(toy_lock_out);
+    toy_lock_out = NULL;
 
     free(threads_toys);
     threads_toys = NULL;
