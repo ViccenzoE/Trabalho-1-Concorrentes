@@ -25,7 +25,7 @@ void *enjoy(void *arg){
     // Brincar até o fim das moedas
     while (self->coins > 0){
         // Escolher um brinquedo
-        int toy_id = rand() % num_toys;
+        int toy_id = rand() % num_toys + 1;
 
         // Clientes não podem tentar entrar no brinquedo se ele estiver funcionando.
         pthread_mutex_lock(&toy_lock[toy_id]);
