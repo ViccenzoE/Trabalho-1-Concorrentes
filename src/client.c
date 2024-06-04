@@ -80,7 +80,7 @@ void open_gate(client_args *args){
     threads_clients = malloc(args->n * sizeof(pthread_t));
     sem_cliente_fila = malloc(args->n * sizeof(sem_t));
     
-    for (int i = 0; i < args->n; i++){
+    for (int i = 1; i <= args->n; i++){
         pthread_create(&threads_clients[i], NULL, enjoy , args->clients[i]); 
         // queue_enter(args->clients[i]);
     }
@@ -90,12 +90,12 @@ void open_gate(client_args *args){
 void close_gate(){
 
     // Une as threads.
-    for (int i = 0; i < num_clients; i++) {
+    for (int i = 1; i <= num_clients; i++) {
         pthread_join(threads_clients[i], NULL);
     }
 
     // Destrói os mutexes.
-    for (int i = 0; i < num_clients; i++) {
+    for (int i = 1; i <= num_clients; i++) {
         sem_destroy(&sem_cliente_fila[i]);
     }
 

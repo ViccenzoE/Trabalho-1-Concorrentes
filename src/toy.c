@@ -76,14 +76,14 @@ void open_toys(toy_args *args){
     num_toys = args->n;
 
     // Aloca memória dinamicamente para os arrays de threads, semáforos e mutexes.
-    threads_toys = malloc(num_toys * sizeof(pthread_t));
-    sem_toys_enter = malloc(num_toys * sizeof(sem_t));
-    toy_lock = malloc(num_toys * sizeof(pthread_mutex_t));
-    toy_lock_out = malloc(num_toys * sizeof(pthread_mutex_t));
+    threads_toys = malloc((num_toys + 1) * sizeof(pthread_t));
+    sem_toys_enter = malloc((num_toys + 1) * sizeof(sem_t));
+    toy_lock = malloc((num_toys + 1) * sizeof(pthread_mutex_t));
+    toy_lock_out = malloc((num_toys + 1) * sizeof(pthread_mutex_t));
 
     // Aloca memória dinamicamente para arrays de variáveis.
-    wait_time = malloc(num_toys * sizeof(int));
-    num_enter = malloc(num_toys * sizeof(int));
+    wait_time = malloc((num_toys + 1) * sizeof(int));
+    num_enter = malloc((num_toys + 1) * sizeof(int));
 
     // Checa se a alocação de memória para os arrays teve sucesso.
     if (threads_toys == NULL || sem_toys_enter == NULL || toy_lock == NULL) {
@@ -91,7 +91,7 @@ void open_toys(toy_args *args){
         exit(EXIT_FAILURE);
     }
 
-    for (int i = 0; i < args->n; i++) {
+    for (int i = 1; i <= args->n; i++) {
         // Inicia semáforo com valor igual à capacidade do brinquedo para entrada, para cada brinquedo.
         sem_init(&sem_toys_enter[i], 0, args->toys[i]->capacity);
         // Cria as threads brinquedo.
@@ -105,17 +105,17 @@ void open_toys(toy_args *args){
 void close_toys(){
 
     // Une as threads.
-    for (int i = 0; i < num_toys; i++) {
+    for (int i = 1; i <= num_toys; i++) {
         pthread_join(threads_toys[i], NULL);
     }
 
     // Destrói os semáforos.
-    for (int i = 0; i < num_toys; i++) {
+    for (int i = 1; i <= num_toys; i++) {
         sem_destroy(&sem_toys_enter[i]);
     }
 
     // Destrói os mutexes.
-    for (int i = 0; i < num_toys; i++) {
+    for (int i = 1; i <= num_toys; i++) {
         pthread_mutex_destroy(&toy_lock[i]);
         pthread_mutex_destroy(&toy_lock_out[i]);
     }
