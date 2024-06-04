@@ -82,15 +82,15 @@ void open_toys(toy_args *args){
         // Atualiza com a thread correspondente a cada brinquedo.
         args->toys[i]->thread = threads_toys[i];
     }
-    
-    // Une as threads.
-    for (int i = 0; i < num_toys; i++) {
-        pthread_join(threads_toys[i], NULL);
-    }
 }
 
 // Desligando os brinquedos
 void close_toys(){
+
+    // Une as threads.
+    for (int i = 0; i < num_toys; i++) {
+        pthread_join(threads_toys[i], NULL);
+    }
 
     // Destrói os semáforos.
     for (int i = 0; i < num_toys; i++) {
