@@ -78,8 +78,8 @@ void open_toys(toy_args *args){
     toy_lock = malloc(num_toys * sizeof(pthread_mutex_t));
 
     // Aloca memória dinamicamente para arrays de variáveis.
-    *wait_time = malloc(num_toys * sizeof(int));
-    *num_enter = malloc(num_toys * sizeof(int));
+    wait_time = malloc(num_toys * sizeof(int));
+    num_enter = malloc(num_toys * sizeof(int));
 
     // Checa se a alocação de memória para os arrays teve sucesso.
     if (threads_toys == NULL || sem_toys_enter == NULL || toy_lock == NULL) {
