@@ -25,7 +25,7 @@ void *enjoy(void *arg){
     // Brincar até o fim das moedas
     while (self->coins > 0){
         // Escolher um brinquedo
-        int toy_id = rand() % num_toys + 1;
+        int toy_id = rand() % num_toys;
 
         // Clientes não podem tentar entrar no brinquedo se ele estiver funcionando.
         pthread_mutex_lock(&toy_lock[toy_id]);
@@ -77,10 +77,10 @@ void queue_enter(client_t *self){
 // Essa função recebe como argumento informações sobre o cliente e deve iniciar os clientes.
 void open_gate(client_args *args){
     //initialize_shared(args);
-    threads_clients = malloc((args->n + 1) * sizeof(pthread_t));
-    sem_cliente_fila = malloc((args->n + 1) * sizeof(sem_t));
+    threads_clients = malloc(args->n * sizeof(pthread_t));
+    sem_cliente_fila = malloc(args->n * sizeof(sem_t));
     
-    for (int i = 1; i <= args->n; i++){
+    for (int i = 0; i < args->n; i++){
         pthread_create(&threads_clients[i], NULL, enjoy , args->clients[i]); 
         // queue_enter(args->clients[i]);
     }
@@ -90,12 +90,12 @@ void open_gate(client_args *args){
 void close_gate(){
 
     // Une as threads.
-    for (int i = 1; i <= num_clients; i++) {
+    for (int i = 0; i < num_clients; i++) {
         pthread_join(threads_clients[i], NULL);
     }
 
     // Destrói os mutexes.
-    for (int i = 1; i <= num_clients; i++) {
+    for (int i = 0; i < num_clients; i++) {
         sem_destroy(&sem_cliente_fila[i]);
     }
 
