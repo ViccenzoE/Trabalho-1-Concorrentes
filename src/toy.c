@@ -21,8 +21,6 @@ void *turn_on(void *args){
     toy_t *toy = (toy_t *) args;
     pthread_t self = pthread_self();
     int value;
-    int *wait_time;
-    int *num_enter;
 
     pthread_mutex_init(&toy_lock[toy->id], NULL);
     if (toy != NULL) {
@@ -75,6 +73,10 @@ void open_toys(toy_args *args){
     sem_toys_enter = malloc(num_toys * sizeof(sem_t));
     toy_lock = malloc(num_toys * sizeof(pthread_mutex_t));
 
+    // Aloca memória dinamicamente para arrays de variáveis.
+    int *wait_time = malloc(num_toys * sizeof(int));
+    int *num_enter = malloc(num_toys * sizeof(int));
+
     // Checa se a alocação de memória para os arrays teve sucesso.
     if (threads_toys == NULL || sem_toys_enter == NULL || toy_lock == NULL) {
         fprintf(stderr, "Erro: Falha ao alocar memória para arrays.\n");
@@ -118,6 +120,12 @@ void close_toys(){
 
     free(sem_toys_enter);
     sem_toys_enter = NULL;
+
+    free(wait_time);
+    wait_time = 0;
+
+    free(num_enter);
+    num_enter = 0;
 
     num_toys = 0;
 }
