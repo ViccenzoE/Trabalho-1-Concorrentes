@@ -9,6 +9,7 @@ extern int parque_aberto;
 extern sem_t *sem_toys_enter;
 extern sem_t *sem_cliente_fila;
 extern pthread_mutex_t *toy_lock;
+extern pthread_mutex_t *toy_lock_out;
 
 /**********************************
  *          ATENÇÃO               *

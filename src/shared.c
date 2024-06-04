@@ -14,6 +14,7 @@ int parque_aberto = 1;
 sem_t *sem_cliente_fila = NULL;
 sem_t *sem_toys_enter = NULL;
 pthread_mutex_t *toy_lock = NULL;
+pthread_mutex_t *toy_lock_out = NULL;
 
 /**********************************
  *          ATENÇÃO               *
