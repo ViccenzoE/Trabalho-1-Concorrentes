@@ -50,7 +50,7 @@ void *turn_on(void *args){
                 num_enter[toy->id] = toy->capacity - value;
                 // Brinquedo entra em funcionamento por wait_time segundos.
                 sleep(wait_time[toy->id]);
-                debug("[EXCLUIR] - NUM_ENTER pos brincar [%d] foi ligado brinquedo [%d].\n", num_enter[toy->id], toy->id);
+                debug("[EXCLUIR] - NUM_ENTER pos brincar [%d] foi ligado brinquedo [%d] value [%d].\n", num_enter[toy->id], toy->id, value);
             }
             
             // Retorna o semáforo ao seu valor inicial, com um número de operações post igual à quantidade de clientes que entrou.
