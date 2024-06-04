@@ -9,6 +9,7 @@ extern int num_toys;
 extern int *num_enter;
 extern int *wait_time;
 extern pthread_t *threads_toys;
+extern int *value;
 
 /********************************
  *          ATENÇÃO             *

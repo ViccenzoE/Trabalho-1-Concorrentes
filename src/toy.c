@@ -16,13 +16,14 @@
 int num_toys = 0;
 int *num_enter = NULL;
 int *wait_time = NULL;
+int *value = NULL;
 pthread_t *threads_toys = NULL;
 
 // Thread que o brinquedo vai usar durante toda a simulacao do sistema
 void *turn_on(void *args){
     toy_t *toy = (toy_t *) args;
     pthread_t self = pthread_self();
-    int value;
+    // int value;
     pthread_mutex_init(&toy_lock[(toy->id -1)], NULL);
     pthread_mutex_init(&toy_lock_out[(toy->id -1)], NULL);
     if (toy != NULL) {
@@ -40,16 +41,16 @@ void *turn_on(void *args){
             pthread_mutex_lock(&toy_lock[(toy->id -1)]);
             num_enter[(toy->id -1)] = 0;
             // if (sem_getvalue(&sem_toys_enter[(toy->id -1)] < toy->capacity, &value)) {
-            sem_getvalue(&sem_toys_enter[(toy->id -1)], &value);
-            if (value < toy->capacity) {
-                num_enter[(toy->id -1)] = toy->capacity - value;
+            sem_getvalue(&sem_toys_enter[(toy->id -1)], &value[(toy->id - 1)]);
+            if (value[(toy->id - 1)] < toy->capacity) {
+                num_enter[(toy->id -1)] = toy->capacity - value[(toy->id - 1)];
                 // Brinquedo entra em funcionamento por wait_time segundos.
                 sleep(wait_time[(toy->id -1)]);
                 // Abre o semáforo para num_enter clientes.
                 for (int i = 0; i < num_enter[(toy->id -1)]; i++) {
                     sem_post(&sem_toys_enter[(toy->id -1)]);
                 }
-                debug("[EXCLUIR] - NUM_ENTER pos brincar [%d] foi ligado brinquedo [%d] value [%d].\n", num_enter[(toy->id -1)], (toy->id), value);
+                debug("[EXCLUIR] - NUM_ENTER pos brincar [%d] foi ligado brinquedo [%d] value [%d].\n", num_enter[(toy->id -1)], (toy->id), value[(toy->id - 1)]);
             }
             
             // Retorna o semáforo ao seu valor inicial, com um número de operações post igual à quantidade de clientes que entrou.
@@ -82,6 +83,7 @@ void open_toys(toy_args *args){
     // Aloca memória dinamicamente para arrays de variáveis.
     wait_time = malloc(num_toys * sizeof(int));
     num_enter = malloc(num_toys * sizeof(int));
+    value = malloc(num_toys * sizeof(int));
 
     // Checa se a alocação de memória para os arrays teve sucesso.
     if (threads_toys == NULL || sem_toys_enter == NULL || toy_lock == NULL) {

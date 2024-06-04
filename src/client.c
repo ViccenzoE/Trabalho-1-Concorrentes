@@ -25,7 +25,7 @@ void *enjoy(void *arg){
     // Brincar até o fim das moedas
     while (self->coins > 0){
         // Escolher um brinquedo
-        int toy_id = rand() % num_toys;
+        int toy_id = rand() % num_toys; // 0 ate num_toys -1
 
         // Clientes não podem tentar entrar no brinquedo se ele estiver funcionando.
         pthread_mutex_lock(&toy_lock[toy_id]);
@@ -43,7 +43,7 @@ void *enjoy(void *arg){
         self->coins--;
         debug("[EXCLUIR] - Turista [%d] ESTA NO PARQUE [%d] moedas.\n", self->id, self->coins);
 
-        pthread_mutex_unlock(&toy_lock_out[toy_id]);
+        //pthread_mutex_unlock(&toy_lock_out[toy_id]);
     }
 
     debug("[EXCLUIR] - Turista [%d] sai do PARQUE [%d] moedas.\n", self->id, self->coins);
@@ -58,7 +58,7 @@ void buy_coins(client_t *self){
 
 // Função onde o cliente espera a liberação da bilheteria para adentrar ao parque.
 void wait_ticket(client_t *self){    
-    sem_wait(&sem_cliente_fila[self->id -1]);
+    sem_wait(&sem_cliente_fila[(self->id - 1)]);
 }
 
 // Função onde o cliente entra na fila da bilheteria
@@ -70,7 +70,7 @@ void queue_enter(client_t *self){
     debug("[WAITING] - Turista [%d] entrou na fila do portao principal\n", self->id);
 
     //semaforo binario 
-    sem_init(&sem_cliente_fila[self->id -1], 0, 0);
+    sem_init(&sem_cliente_fila[(self->id - 1)], 0, 0);
     wait_ticket(self);
     
     buy_coins(self);
