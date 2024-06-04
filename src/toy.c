@@ -14,7 +14,7 @@
 
 // Inicializa variáveis globais.
 int num_toys = 0;
-int *num_toys = NULL;
+int *num_enter = NULL;
 int *wait_time = NULL;
 pthread_t *threads_toys = NULL;
 
