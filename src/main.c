@@ -78,7 +78,6 @@ void finish_toys(toy_t **toys, int number_toys){
 void finish_tickets(ticket_t **tickets, int number_clients){
     for (int i = 0; i < number_clients; i++){
         free(tickets[i]);
-        pthread_exit(NULL);
     }
     free(tickets);
 }
@@ -152,7 +151,7 @@ int main(int argc, char *argv[]){
     *********************************************************************************/
     
     // Sincronize aqui
-
+    debug("[EXCLUIR] - Chegamos quase no fim.\n");
     // Desalocando argumentos.
     free(cli_args);
     free(ticket_args);
