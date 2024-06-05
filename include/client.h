@@ -3,8 +3,6 @@
 
 #include <defs.h>
 
-// Você pode declarar novas funções aqui
-
 extern int num_clients;
 extern pthread_t *threads_clients;
 void queue_enter(client_t *self);

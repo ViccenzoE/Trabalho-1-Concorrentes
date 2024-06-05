@@ -3,8 +3,7 @@
 
 #include <defs.h>
 
-// Você pode declarar novas funções (ou variaveis compartilhadas) aqui
-
+// Variáveis compartilhadas
 extern int parque_aberto;
 extern sem_t *sem_toys_enter;
 extern sem_t *sem_cliente_fila;

@@ -3,8 +3,6 @@
 
 #include <defs.h>
 
-// Você pode declarar novas funções aqui
-
 extern pthread_mutex_t dequeue_mutex;
 extern pthread_t *threads_tickets;
 extern int num_tickets;
