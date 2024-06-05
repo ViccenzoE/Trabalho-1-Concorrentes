@@ -11,7 +11,7 @@
 #include <queue.h>
 #include "shared.h"
 
-pthread_mutex_t dequeue_mutex;
+pthread_mutex_t dequeue_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_t *threads_tickets = NULL;
 int num_tickets = 0;
 

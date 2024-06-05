@@ -31,7 +31,7 @@ void *turn_on(void *args){
         // Acessa o id do brinquedo.
         debug("[ON] - O brinquedo [%d] foi ligado.\n", (toy->id));
         // Tempo de espera do brinquedo depende da sua id, para que as transições não ocorram todas ao mesmo tempo.
-        wait_time[(toy->id -1)] = 2*(toy->id -1) + 3;
+        wait_time[(toy->id -1)] = (toy->id -1) + 2;
         // Loop do brinquedo roda enquanto algum cliente tiver ao menos uma moeda.
         while(parque_aberto) {
             // Aguarda wait_time segundos para as threads cliente escolherem brinquedos.
@@ -59,8 +59,11 @@ void *turn_on(void *args){
 //                sem_post(&sem_toys_enter[(toy->id -1)]);
 //            }
             num_enter[(toy->id -1)]= 0;
-            // Libera os clientes para pegarem o semáforo para entrar no brinquedo.
+            // Libera os clientes para saírem do brinquedo.
             pthread_mutex_unlock(&toy_lock_out[toy->id - 1]);
+            // Espera wait_time para permitir que os clientes saiam.
+            sleep(wait_time[(toy->id -1)]);
+            // Libera os clientes para pegarem o semáforo para entrar no brinquedo.
             pthread_mutex_unlock(&toy_lock[(toy->id - 1)]);
         }
         debug("[OFF] - O brinquedo [%d] foi desligado.\n", (toy->id));
