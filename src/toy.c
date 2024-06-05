@@ -23,6 +23,7 @@ pthread_t *threads_toys = NULL;
 void *turn_on(void *args){
     toy_t *toy = (toy_t *) args;
     pthread_t self = pthread_self();
+    // Inicializa os mutexes do brinquedo.
     pthread_mutex_init(&toy_lock[(toy->id -1)], NULL);
     pthread_mutex_init(&toy_lock_out[(toy->id -1)], NULL);
     if (toy != NULL) {
@@ -32,13 +33,17 @@ void *turn_on(void *args){
         wait_time[(toy->id -1)] = (toy->id -1) + 2;
         // Loop do brinquedo roda enquanto algum cliente tiver ao menos uma moeda.
         while(parque_aberto) {
-            // Aguarda wait_time segundos para as threads cliente escolherem brinquedos.
+            // Mutex compartilhado com client.c: o brinquedo trava e não deixa os clientes saírem.
             pthread_mutex_lock(&toy_lock_out[toy->id - 1]);
+            // Aguarda wait_time segundos para as threads cliente escolherem brinquedos.
             sleep(wait_time[(toy->id -1)]);
             // Impede os clientes de tentarem pegar o semáforo para entrar no brinquedo, brinquedo tentará começar a funcionar.
             pthread_mutex_lock(&toy_lock[(toy->id -1)]);
+            // Número de clientes que entraram no brinquedo, inicializado em zero.
             num_enter[(toy->id -1)] = 0;
+            // Obtendo o valor do semáforo do brinquedo, sabemos quantos clientes entraram.
             sem_getvalue(&sem_toys_enter[(toy->id -1)], &value[(toy->id - 1)]);
+            // Se algum cliente entrou, o brinquedo entra em operação.
             if (value[(toy->id - 1)] < toy->capacity) {
                 num_enter[(toy->id -1)] = toy->capacity - value[(toy->id - 1)];
                 // Brinquedo entra em funcionamento por wait_time segundos.
