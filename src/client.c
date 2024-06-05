@@ -101,7 +101,7 @@ void open_gate(client_args *args){
 
 // Essa função deve finalizar os clientes
 void close_gate(){
-
+    debug("[EXCLUIR] - Entrou no close_gate().\n");
     // Une as threads.
     for (int i = 0; i < num_clients; i++) {
         pthread_join(threads_clients[i], NULL);

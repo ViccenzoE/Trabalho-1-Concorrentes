@@ -55,7 +55,7 @@ void open_tickets(tickets_args *args){
 
 // Essa função deve finalizar a bilheteria
 void close_tickets(){
-
+    debug("[EXCLUIR] - Entrou no close_tickets().\n");
     free(threads_tickets);
     threads_tickets = NULL;
     pthread_mutex_destroy(&dequeue_mutex);

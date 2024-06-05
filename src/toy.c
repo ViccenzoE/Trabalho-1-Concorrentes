@@ -109,6 +109,7 @@ void open_toys(toy_args *args){
 
 // Desligando os brinquedos
 void close_toys(){
+    debug("[EXCLUIR] - Entrou no close_toys().\n");
     //parque_aberto = 0;
     // Une as threads.
     for (int i = 0; i < num_toys; i++) {
@@ -147,6 +148,9 @@ void close_toys(){
 
     free(num_enter);
     num_enter = 0;
+
+    free(value);
+    value = 0;
 
     num_toys = 0;
 }
