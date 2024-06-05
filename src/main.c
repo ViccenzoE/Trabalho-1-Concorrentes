@@ -151,7 +151,7 @@ int main(int argc, char *argv[]){
     *********************************************************************************/
     
     // Sincronize aqui
-    debug("[EXCLUIR] - Chegamos quase no fim.\n");
+
     // Desalocando argumentos.
     free(cli_args);
     free(ticket_args);

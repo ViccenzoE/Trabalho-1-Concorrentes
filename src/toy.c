@@ -21,10 +21,8 @@ pthread_t *threads_toys = NULL;
 
 // Thread que o brinquedo vai usar durante toda a simulacao do sistema
 void *turn_on(void *args){
-    // debug("[EXCLUIR] - O brinquedo foi ACIONADO.\n"); //seg fault a partir daqui
     toy_t *toy = (toy_t *) args;
     pthread_t self = pthread_self();
-    // int value;
     pthread_mutex_init(&toy_lock[(toy->id -1)], NULL);
     pthread_mutex_init(&toy_lock_out[(toy->id -1)], NULL);
     if (toy != NULL) {
@@ -37,11 +35,9 @@ void *turn_on(void *args){
             // Aguarda wait_time segundos para as threads cliente escolherem brinquedos.
             pthread_mutex_lock(&toy_lock_out[toy->id - 1]);
             sleep(wait_time[(toy->id -1)]);
-            debug("[EXCLUIR] - NUM_ENTER pre brincar [%d] foi ligado brinquedo [%d].\n", num_enter[(toy->id - 1)], (toy->id));
             // Impede os clientes de tentarem pegar o semáforo para entrar no brinquedo, brinquedo tentará começar a funcionar.
             pthread_mutex_lock(&toy_lock[(toy->id -1)]);
             num_enter[(toy->id -1)] = 0;
-            // if (sem_getvalue(&sem_toys_enter[(toy->id -1)] < toy->capacity, &value)) {
             sem_getvalue(&sem_toys_enter[(toy->id -1)], &value[(toy->id - 1)]);
             if (value[(toy->id - 1)] < toy->capacity) {
                 num_enter[(toy->id -1)] = toy->capacity - value[(toy->id - 1)];
@@ -51,13 +47,7 @@ void *turn_on(void *args){
                 for (int i = 0; i < num_enter[(toy->id -1)]; i++) {
                     sem_post(&sem_toys_enter[(toy->id -1)]);
                 }
-                debug("[EXCLUIR] - NUM_ENTER pos brincar [%d] foi ligado brinquedo [%d] value [%d].\n", num_enter[(toy->id -1)], (toy->id), value[(toy->id - 1)]);
             }
-            
-            // Retorna o semáforo ao seu valor inicial, com um número de operações post igual à quantidade de clientes que entrou.
-//            for (int i = 0; i < num_enter[(toy->id -1)]; i++) {
-//                sem_post(&sem_toys_enter[(toy->id -1)]);
-//            }
             num_enter[(toy->id -1)]= 0;
             // Libera os clientes para saírem do brinquedo.
             pthread_mutex_unlock(&toy_lock_out[toy->id - 1]);
@@ -109,8 +99,6 @@ void open_toys(toy_args *args){
 
 // Desligando os brinquedos
 void close_toys(){
-    debug("[EXCLUIR] - Entrou no close_toys().\n");
-    //parque_aberto = 0;
     // Une as threads.
     for (int i = 0; i < num_toys; i++) {
         pthread_join(threads_toys[i], NULL);

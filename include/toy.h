@@ -3,8 +3,6 @@
 
 #include <defs.h>
 
-// Você pode declarar novas funções aqui
-
 extern int num_toys;
 extern int *num_enter;
 extern int *wait_time;

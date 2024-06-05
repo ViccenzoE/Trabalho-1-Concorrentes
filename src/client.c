@@ -16,7 +16,6 @@
 
 // Inicializa variáveis globais.
 int num_clients = 0;
-// int num_clients_atual = 0;
 pthread_t *threads_clients = NULL;
 
 // Thread que implementa o fluxo do cliente no parque.
@@ -31,26 +30,15 @@ void *enjoy(void *arg){
         // Clientes não podem tentar entrar no brinquedo se ele estiver funcionando.
         pthread_mutex_lock(&toy_lock[toy_id]);
         pthread_mutex_unlock(&toy_lock[toy_id]);
-       // sem_getvalue(&sem_toy_lock, &value);
-        
-        //pthread_mutex_unlock(&toy_lock[toy_id]);
         // Esperar a vez para entrar no brinquedo
         sem_wait(&sem_toys_enter[toy_id]);
-
-        
-
         // Clientes não podem sair do brinquedo se ele estiver funcionando.
         pthread_mutex_lock(&toy_lock_out[toy_id]);
         pthread_mutex_unlock(&toy_lock_out[toy_id]);
         
         // Decrementar moedas
         self->coins--;
-        debug("[EXCLUIR] - Turista [%d] ESTA NO PARQUE [%d] moedas.\n", self->id, self->coins);
-
-        //pthread_mutex_unlock(&toy_lock_out[toy_id]);
     }
-
-    debug("[EXCLUIR] - Turista [%d] sai do PARQUE [%d] moedas.\n", self->id, self->coins);
     debug("[EXIT] - O turista saiu do parque.\n");
     parque_aberto--;
     pthread_exit(NULL);
@@ -71,15 +59,13 @@ void queue_enter(client_t *self){
 
     enqueue(gate_queue, self->id);
 
-    // Sua lógica aqui.
     debug("[WAITING] - Turista [%d] entrou na fila do portao principal\n", self->id);
 
-    //semaforo binario 
+    // Inicia semaforo binario 
     sem_init(&sem_cliente_fila[(self->id - 1)], 0, 0);
     wait_ticket(self);
     
     buy_coins(self);
-    // Sua lógica aqui.
     
     debug("[CASH] - Turista [%d] comprou [%d] moedas.\n", self->id, self->coins);
 }
@@ -89,19 +75,18 @@ void open_gate(client_args *args){
     // Determina a variável global num_clients a partir dos argumentos.
     num_clients = args->n;
     parque_aberto = num_clients;
-    //
+    // Aloca memória dinamicamente para os arrays de threads e semáforos.
     threads_clients = malloc(args->n * sizeof(pthread_t));
     sem_cliente_fila = malloc(args->n * sizeof(sem_t));
     
+    // Cada cliente é representado por uma thread
     for (int i = 0; i < args->n; i++){
         pthread_create(&threads_clients[i], NULL, enjoy , args->clients[i]); 
-        // queue_enter(args->clients[i]);
     }
 }
 
 // Essa função deve finalizar os clientes
 void close_gate(){
-    debug("[EXCLUIR] - Entrou no close_gate().\n");
     // Une as threads.
     for (int i = 0; i < num_clients; i++) {
         pthread_join(threads_clients[i], NULL);
@@ -120,6 +105,4 @@ void close_gate(){
     sem_cliente_fila = NULL;
 
     num_clients = 0;
-
-    //finalize_shared();
 }

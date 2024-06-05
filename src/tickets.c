@@ -41,6 +41,7 @@ void *sell(void *args){
 void open_tickets(tickets_args *args){
 
     num_tickets = args ->n;
+    // Aloca memória dinamicamente para o array de threads
     threads_tickets = malloc(num_tickets * sizeof(pthread_t));
     // Inicia o mutex que protege uma região crítica
     pthread_mutex_init(&dequeue_mutex, NULL);
@@ -58,7 +59,9 @@ void open_tickets(tickets_args *args){
 
 // Essa função deve finalizar a bilheteria
 void close_tickets(){
+    // Libera memória do array
     free(threads_tickets);
     threads_tickets = NULL;
+    // Destrói o mutex
     pthread_mutex_destroy(&dequeue_mutex);
 }
