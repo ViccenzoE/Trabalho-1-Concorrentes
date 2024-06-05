@@ -21,7 +21,7 @@ pthread_t *threads_toys = NULL;
 
 // Thread que o brinquedo vai usar durante toda a simulacao do sistema
 void *turn_on(void *args){
-    debug("[EXCLUIR] - O brinquedo foi ACIONADO.\n"); //seg fault a partir daqui
+    // debug("[EXCLUIR] - O brinquedo foi ACIONADO.\n"); //seg fault a partir daqui
     toy_t *toy = (toy_t *) args;
     pthread_t self = pthread_self();
     // int value;
@@ -106,7 +106,7 @@ void open_toys(toy_args *args){
 
 // Desligando os brinquedos
 void close_toys(){
-
+    //parque_aberto = 0;
     // Une as threads.
     for (int i = 0; i < num_toys; i++) {
         pthread_join(threads_toys[i], NULL);

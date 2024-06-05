@@ -16,6 +16,7 @@
 
 // Inicializa variáveis globais.
 int num_clients = 0;
+// int num_clients_atual = 0;
 pthread_t *threads_clients = NULL;
 
 // Thread que implementa o fluxo do cliente no parque.
@@ -51,6 +52,7 @@ void *enjoy(void *arg){
 
     debug("[EXCLUIR] - Turista [%d] sai do PARQUE [%d] moedas.\n", self->id, self->coins);
     debug("[EXIT] - O turista saiu do parque.\n");
+    parque_aberto--;
     pthread_exit(NULL);
 }
 
@@ -84,7 +86,10 @@ void queue_enter(client_t *self){
 
 // Essa função recebe como argumento informações sobre o cliente e deve iniciar os clientes.
 void open_gate(client_args *args){
-    //initialize_shared(args);
+    // Determina a variável global num_clients a partir dos argumentos.
+    num_clients = args->n;
+    parque_aberto = num_clients;
+    //
     threads_clients = malloc(args->n * sizeof(pthread_t));
     sem_cliente_fila = malloc(args->n * sizeof(sem_t));
     
